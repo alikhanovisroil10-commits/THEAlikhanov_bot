@@ -5,37 +5,242 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KRADZIU Player</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
         body {
-            background-color: #121212;
-            color: white;
-            font-family: Arial, sans-serif;
+            background: #0f0c20;
+            color: #fff;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
         }
-        .card {
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            width: 250px;
-            height: 250px;
+        .header {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ff007f, #7928ca);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .search-box {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            padding: 5px 15px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .search-box input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            padding: 10px;
+            font-size: 15px;
+        }
+        .search-box button {
+            background: transparent;
+            border: none;
+            color: #ff007f;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .results-container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 100px;
+        }
+        .track-card {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .track-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+        .track-card img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .track-info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .track-title {
+            font-size: 15px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .track-artist {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 3px;
+        }
+        /* Fixed Player at Bottom */
+        .player-bar {
+            position: fixed;
+            bottom: 15px;
+            width: calc(100% - 30px);
+            max-width: 400px;
+            background: rgba(20, 15, 38, 0.95);
+            border: 1px solid rgba(255, 0, 127, 0.3);
             border-radius: 20px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+            width: 60%;
+        }
+        .player-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+        .play-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff007f, #7928ca);
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
-        h2 { margin-top: 20px; }
-        p { color: #aaa; }
     </style>
 </head>
 <body>
-    <div class="card">Your Mix</div>
-    <h2>Fallen Star</h2>
-    <p>The Neighbourhood</p>
+
+    <div class="header">KRADZIU MUSIC</div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Musiqa yoki xonanda nomi...">
+        <button onclick="searchMusic()"><i class="fas fa-search"></i></button>
+    </div>
+
+    <div class="results-container" id="results">
+        <p style="text-align: center; color: #888;">Qidirish uchun yoza bering...</p>
+    </div>
+
+    <div class="player-bar" id="playerBar" style="display: none;">
+        <div class="player-info">
+            <img id="currentCover" src="" alt="cover">
+            <div class="track-info">
+                <div class="track-title" id="currentTitle">Musiqa nomi</div>
+                <div class="track-artist" id="currentArtist">Xonanda</div>
+            </div>
+        </div>
+        <button class="play-btn" onclick="togglePlay()"><i class="fas fa-play" id="playIcon"></i></button>
+    </div>
+
+    <audio id="audioPlayer"></audio>
+
+    <script>
+        const audio = document.getElementById('audioPlayer');
+        let isPlaying = false;
+
+        async function searchMusic() {
+            const query = document.getElementById('searchInput').value;
+            if (!query) return;
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p style="text-align: center; color: #888;">Qidirilmoqda...</p>';
+
+            // Jamendo Free Music API
+            const clientId = 'c8b6b230'; 
+            const url = `https://api.jamendo.com/v3.0/tracks/?client_id=${clientId}&format=json&limit=15&search=${encodeURIComponent(query)}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                resultsDiv.innerHTML = '';
+
+                if (data.results.length === 0) {
+                    resultsDiv.innerHTML = '<p style="text-align: center; color: #888;">Musiqa topilmadi.</p>';
+                    return;
+                }
+
+                data.results.forEach(track => {
+                    const card = document.createElement('div');
+                    card.className = 'track-card';
+                    card.onclick = () => playTrack(track.audio, track.name, track.artist_name, track.image);
+
+                    card.innerHTML = `
+                        <img src="${track.image}" alt="cover">
+                        <div class="track-info">
+                            <div class="track-title">${track.name}</div>
+                            <div class="track-artist">${track.artist_name}</div>
+                        </div>
+                    `;
+                    resultsDiv.appendChild(card);
+                });
+
+            } catch (error) {
+                resultsDiv.innerHTML = '<p style="text-align: center; color: #ff4d4d;">Xatolik yuz berdi!</p>';
+            }
+        }
+
+        function playTrack(audioUrl, title, artist, cover) {
+            audio.src = audioUrl;
+            audio.play();
+            isPlaying = true;
+
+            document.getElementById('currentTitle').innerText = title;
+            document.getElementById('currentArtist').innerText = artist;
+            document.getElementById('currentCover').src = cover;
+            document.getElementById('playerBar').style.display = 'flex';
+
+            document.getElementById('playIcon').className = 'fas fa-pause';
+        }
+
+        function togglePlay() {
+            const playIcon = document.getElementById('playIcon');
+            if (isPlaying) {
+                audio.pause();
+                playIcon.className = 'fas fa-play';
+            } else {
+                audio.play();
+                playIcon.className = 'fas fa-pause';
+            }
+            isPlaying = !isPlaying;
+        }
+    </script>
 </body>
 </html>
