@@ -3,235 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Music Player App</title>
+    <title>Spotify Redesign Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #ff0055;
-            --secondary: #7600ff;
-            --bg-color: #0d0a1a;
-            --card-bg: rgba(255, 255, 255, 0.07);
-            --card-border: rgba(255, 255, 255, 0.12);
+            --spotify-green: #1DB954;
+            --bg-black: #121212;
+            --bg-card: #181818;
+            --bg-card-hover: #282828;
+            --text-main: #FFFFFF;
+            --text-sub: #B3B3B3;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Circular Std", "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: #fff;
+            background-color: var(--bg-black);
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 15px;
-            padding-bottom: 110px;
+            padding: 16px;
+            padding-bottom: 90px;
         }
 
-        /* Top Bar */
-        .top-bar {
+        /* Top Header */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
-        .app-brand {
+        .header-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .app-logo {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 14px;
+        .spotify-logo {
+            font-size: 28px;
+            color: var(--spotify-green);
+        }
+
+        .app-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #242424;
+            border: 1px solid transparent;
+            padding: 14px 45px 14px 42px;
+            border-radius: 30px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--spotify-green);
+            background: #2a2a2a;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-sub);
+            font-size: 16px;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--spotify-green);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: #000;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);
         }
 
-        .app-name {
-            font-size: 22px;
-            font-weight: 800;
-            background: linear-gradient(90deg, #ff0055, #a055ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Search Container */
-        .search-box {
-            position: relative;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .search-box input {
-            width: 100%;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 14px 45px 14px 18px;
-            border-radius: 18px;
-            color: #fff;
-            font-size: 15px;
-            outline: none;
-            backdrop-filter: blur(10px);
-        }
-
-        .search-box input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
-        }
-
-        .search-box button {
-            position: absolute;
-            right: 10px;
-            background: none;
-            border: none;
-            color: var(--primary);
+        /* Track List */
+        .section-title {
             font-size: 18px;
-            cursor: pointer;
-            padding: 8px;
-        }
-
-        /* Banner */
-        .hero-banner {
-            padding: 18px;
-            background: linear-gradient(135deg, rgba(255, 0, 85, 0.25), rgba(118, 0, 255, 0.25));
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .hero-text h2 {
-            font-size: 17px;
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 14px;
         }
 
-        .hero-text p {
-            font-size: 12px;
-            color: #b5b5b5;
-        }
-
-        .hero-icon {
-            font-size: 32px;
-            color: var(--primary);
-        }
-
-        /* Results List */
-        .results-container {
+        .track-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .track-card {
+        .track-item {
             display: flex;
             align-items: center;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 10px 14px;
-            border-radius: 16px;
+            background: var(--bg-card);
+            padding: 10px 12px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.2s ease, background 0.2s ease;
+            transition: background 0.2s;
         }
 
-        .track-card:active {
-            transform: scale(0.97);
-            background: rgba(255, 255, 255, 0.15);
+        .track-item:active {
+            background: var(--bg-card-hover);
         }
 
-        .track-card img {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+        .track-item img {
+            width: 52px;
+            height: 52px;
+            border-radius: 6px;
             object-fit: cover;
             margin-right: 14px;
         }
 
-        .track-details {
+        .track-info {
             flex: 1;
             overflow: hidden;
         }
 
-        .track-title {
-            font-size: 14px;
+        .track-name {
+            font-size: 15px;
             font-weight: 600;
-            color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .track-artist {
-            font-size: 12px;
-            color: #a0a0a0;
-            margin-top: 3px;
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-top: 4px;
         }
 
-        .play-icon-btn {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 14px;
-        }
-
-        /* Bottom Player Bar */
-        .player-bar {
+        /* Mini Player Bottom Bar */
+        .mini-player {
             position: fixed;
-            bottom: 15px;
-            left: 15px;
-            right: 15px;
-            background: rgba(20, 15, 35, 0.95);
-            border: 1px solid rgba(255, 0, 85, 0.4);
-            border-radius: 20px;
-            padding: 10px 16px;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            background: #282828;
+            border-radius: 12px;
+            padding: 8px 14px;
             display: none;
             align-items: center;
             justify-content: space-between;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+            z-index: 90;
         }
 
-        .player-left {
+        .mini-left {
             display: flex;
             align-items: center;
             gap: 12px;
-            width: 70%;
-        }
-
-        .player-left img {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            object-fit: cover;
-        }
-
-        .player-info {
             overflow: hidden;
         }
 
-        .player-title {
+        .mini-left img {
+            width: 42px;
+            height: 42px;
+            border-radius: 6px;
+        }
+
+        .mini-title {
             font-size: 13px;
             font-weight: 600;
             white-space: nowrap;
@@ -239,79 +199,251 @@
             text-overflow: ellipsis;
         }
 
-        .player-artist {
+        .mini-artist {
             font-size: 11px;
-            color: #888;
+            color: var(--text-sub);
         }
 
-        .main-play-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        .mini-controls {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .mini-play-btn {
+            background: none;
             border: none;
-            color: white;
-            font-size: 16px;
+            color: #fff;
+            font-size: 20px;
             cursor: pointer;
+        }
+
+        /* Full Screen Spotify Player */
+        .full-player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, #331520 0%, var(--bg-black) 100%);
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            padding: 24px;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .full-player.active {
+            display: flex;
+        }
+
+        .full-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .full-header button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+        }
+
+        .full-header-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-sub);
+        }
+
+        .full-cover-box {
+            width: 100%;
+            aspect-ratio: 1/1;
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+
+        .full-cover-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .full-track-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .full-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .full-artist {
+            font-size: 14px;
+            color: var(--text-sub);
+        }
+
+        .like-btn {
+            color: var(--spotify-green);
+            font-size: 22px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--spotify-green);
+            border-radius: 2px;
+        }
+
+        .time-stamps {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 8px;
+        }
+
+        /* Main Controls */
+        .main-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .control-icon {
+            font-size: 20px;
+            color: var(--text-sub);
+            cursor: pointer;
+        }
+
+        .play-big-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--spotify-green);
+            border: none;
+            color: #000;
+            font-size: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
         }
 
         .empty-state {
             text-align: center;
-            color: #777;
-            padding: 40px 20px;
-            font-size: 14px;
+            color: var(--text-sub);
+            padding: 50px 20px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <div class="top-bar">
-        <div class="app-brand">
-            <div class="app-logo"><i class="fas fa-compact-disc"></i></div>
-            <div class="app-name">MY MUSIC APP</div>
+    <!-- App Header -->
+    <div class="header">
+        <div class="header-left">
+            <i class="fab fa-spotify spotify-logo"></i>
+            <div class="app-title">Spotify</div>
         </div>
-        <i class="fas fa-fire" style="color: #ff0055; font-size: 20px;"></i>
+        <i class="fas fa-cog" style="color: var(--text-sub); font-size: 20px;"></i>
     </div>
 
-    <!-- Search Box -->
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Qo'shiq nomi yoki xonanda..." onkeypress="if(event.key==='Enter') searchMusic()">
-        <button onclick="searchMusic()"><i class="fas fa-search"></i></button>
+    <!-- Search -->
+    <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Nimani tinglashni xohlaysiz?" onkeypress="if(event.key==='Enter') searchMusic()">
+        <button class="search-btn" onclick="searchMusic()"><i class="fas fa-arrow-right"></i></button>
     </div>
 
-    <!-- Banner -->
-    <div class="hero-banner">
-        <div class="hero-text">
-            <h2>Musiqiy Olam</h2>
-            <p>Istalgan musiqa nomini qidiring va eshiting</p>
-        </div>
-        <div class="hero-icon">
-            <i class="fas fa-headphones-alt"></i>
-        </div>
-    </div>
-
-    <!-- Natijalar -->
-    <div class="results-container" id="results">
+    <!-- Track List -->
+    <div class="section-title">Natijalar</div>
+    <div class="track-list" id="results">
         <div class="empty-state">
-            <i class="fas fa-music" style="font-size: 36px; margin-bottom: 12px; color: #444;"></i>
-            <p>Qo'shiq nomini yozing va qidiruv tugmasini bosing</p>
+            <i class="fas fa-music" style="font-size: 40px; margin-bottom: 12px; color: #333;"></i>
+            <p>Sevimli qo'shiq yoki xonandangizni qidiring</p>
         </div>
     </div>
 
-    <!-- Pastki Pleyer Bar -->
-    <div class="player-bar" id="playerBar">
-        <div class="player-left">
-            <img id="currentCover" src="" alt="cover">
-            <div class="player-info">
-                <div class="player-title" id="currentTitle">Musiqa nomi</div>
-                <div class="player-artist" id="currentArtist">Xonanda</div>
+    <!-- Mini Bottom Player -->
+    <div class="mini-player" id="miniPlayer" onclick="openFullPlayer()">
+        <div class="mini-left">
+            <img id="miniCover" src="" alt="cover">
+            <div>
+                <div class="mini-title" id="miniTitle">Musiqa nomi</div>
+                <div class="mini-artist" id="miniArtist">Xonanda</div>
             </div>
         </div>
-        <button class="main-play-btn" onclick="togglePlay()"><i class="fas fa-pause" id="playIcon"></i></button>
+        <div class="mini-controls" onclick="event.stopPropagation()">
+            <button class="mini-play-btn" onclick="togglePlay()"><i class="fas fa-pause" id="miniPlayIcon"></i></button>
+        </div>
+    </div>
+
+    <!-- Full Screen Spotify Player -->
+    <div class="full-player" id="fullPlayer">
+        <div class="full-header">
+            <button onclick="closeFullPlayer()"><i class="fas fa-chevron-down"></i></button>
+            <div class="full-header-title">QO'SHIQ TINGLANMOQDA</div>
+            <button><i class="fas fa-ellipsis-h"></i></button>
+        </div>
+
+        <div class="full-cover-box">
+            <img id="fullCover" src="" alt="Album Cover">
+        </div>
+
+        <div>
+            <div class="full-track-details">
+                <div>
+                    <div class="full-title" id="fullTitle">Musiqa Nomi</div>
+                    <div class="full-artist" id="fullArtist">Xonanda</div>
+                </div>
+                <i class="fas fa-heart like-btn"></i>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" onclick="seekAudio(event)">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="time-stamps">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalDuration">0:00</span>
+                </div>
+            </div>
+
+            <!-- Main Player Buttons -->
+            <div class="main-controls">
+                <i class="fas fa-random control-icon"></i>
+                <i class="fas fa-step-backward control-icon"></i>
+                <button class="play-big-btn" onclick="togglePlay()"><i class="fas fa-pause" id="fullPlayIcon"></i></button>
+                <i class="fas fa-step-forward control-icon"></i>
+                <i class="fas fa-redo control-icon"></i>
+            </div>
+        </div>
     </div>
 
     <audio id="audioPlayer"></audio>
@@ -320,6 +452,13 @@
         const audio = document.getElementById('audioPlayer');
         let isPlaying = false;
 
+        const INSTANCES = [
+            "https://invidious.nerqv.psf.uz",
+            "https://vid.puffyan.us",
+            "https://invidious.drgns.space"
+        ];
+        let currentInstance = INSTANCES[0];
+
         async function searchMusic() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
@@ -327,94 +466,118 @@
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
                 <div class="empty-state">
-                    <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--primary);"></i>
-                    <p style="margin-top: 10px;">Musiqalar qidirilmoqda...</p>
+                    <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--spotify-green);"></i>
+                    <p style="margin-top: 10px;">Spotify bo'yicha qidirilmoqda...</p>
                 </div>
             `;
 
             try {
-                // Piped API - YouTube bazasidan qidirish (Block bo'lmaydi va har qanday musiqani topadi)
-                const response = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(query)}&filter=music_songs`);
+                const response = await fetch(`${currentInstance}/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
                 const data = await response.json();
 
                 resultsDiv.innerHTML = '';
 
-                if (!data.items || data.items.length === 0) {
-                    resultsDiv.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-exclamation-circle" style="font-size: 32px;"></i>
-                            <p style="margin-top: 10px;">Musiqa topilmadi.</p>
-                        </div>
-                    `;
+                if (!data || data.length === 0) {
+                    resultsDiv.innerHTML = `<div class="empty-state"><p>Musiqa topilmadi.</p></div>`;
                     return;
                 }
 
-                data.items.slice(0, 15).forEach(item => {
+                data.slice(0, 15).forEach(item => {
                     const card = document.createElement('div');
-                    card.className = 'track-card';
-                    const cover = item.thumbnail || 'https://via.placeholder.com/100';
-                    const videoId = item.url.split('v=')[1];
+                    card.className = 'track-item';
+                    const cover = item.videoThumbnails ? item.videoThumbnails[0].url : 'https://via.placeholder.com/100';
 
-                    card.onclick = () => loadAndPlayTrack(videoId, item.title, item.uploaderName, cover);
+                    card.onclick = () => loadTrack(item.videoId, item.title, item.author, cover);
 
                     card.innerHTML = `
-                        <img src="${cover}" alt="cover">
-                        <div class="track-details">
-                            <div class="track-title">${item.title}</div>
-                            <div class="track-artist">${item.uploaderName}</div>
+                        <img src="${cover}">
+                        <div class="track-info">
+                            <div class="track-name">${item.title}</div>
+                            <div class="track-artist">${item.author}</div>
                         </div>
-                        <div class="play-icon-btn">
-                            <i class="fas fa-play"></i>
-                        </div>
+                        <i class="fas fa-play" style="color: var(--text-sub); font-size: 14px;"></i>
                     `;
                     resultsDiv.appendChild(card);
                 });
-
-            } catch (error) {
-                resultsDiv.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-wifi" style="font-size: 32px; color: var(--primary);"></i>
-                        <p style="margin-top: 10px;">Ulanishda xatolik. Qayta urinib ko'ring.</p>
-                    </div>
-                `;
+            } catch (e) {
+                currentInstance = INSTANCES[(INSTANCES.indexOf(currentInstance) + 1) % INSTANCES.length];
+                searchMusic();
             }
         }
 
-        async function loadAndPlayTrack(videoId, title, artist, cover) {
-            document.getElementById('currentTitle').innerText = title;
-            document.getElementById('currentArtist').innerText = artist;
-            document.getElementById('currentCover').src = cover;
-            document.getElementById('playerBar').style.display = 'flex';
+        async function loadTrack(videoId, title, artist, cover) {
+            document.getElementById('miniTitle').innerText = title;
+            document.getElementById('miniArtist').innerText = artist;
+            document.getElementById('miniCover').src = cover;
+
+            document.getElementById('fullTitle').innerText = title;
+            document.getElementById('fullArtist').innerText = artist;
+            document.getElementById('fullCover').src = cover;
+
+            document.getElementById('miniPlayer').style.display = 'flex';
 
             try {
-                // Audio havolasini olish
-                const res = await fetch(`https://pipedapi.kavin.rocks/streams/${videoId}`);
+                const res = await fetch(`${currentInstance}/api/v1/videos/${videoId}`);
                 const data = await res.json();
 
-                // Eng yaxshi sifatli audio faylini tanlash
-                const audioStream = data.audioStreams.find(s => s.mimeType.includes('audio/webm') || s.mimeType.includes('audio/mp4'));
-                
-                if (audioStream && audioStream.url) {
-                    audio.src = audioStream.url;
-                    audio.play();
-                    isPlaying = true;
-                    document.getElementById('playIcon').className = 'fas fa-pause';
+                if (data && data.adaptiveFormats) {
+                    const audioFormats = data.adaptiveFormats.filter(f => f.type && f.type.includes('audio'));
+                    if (audioFormats.length > 0) {
+                        audio.src = audioFormats[0].url;
+                        audio.play();
+                        isPlaying = true;
+                        updateIcons();
+                    }
                 }
             } catch (e) {
-                alert("Audio faylini yuklashda xatolik yuz berdi.");
+                alert("Audio yuklashda xatolik bo'ldi.");
             }
         }
 
         function togglePlay() {
-            const playIcon = document.getElementById('playIcon');
             if (isPlaying) {
                 audio.pause();
-                playIcon.className = 'fas fa-play';
             } else {
                 audio.play();
-                playIcon.className = 'fas fa-pause';
             }
             isPlaying = !isPlaying;
+            updateIcons();
+        }
+
+        function updateIcons() {
+            const icon = isPlaying ? 'fa-pause' : 'fa-play';
+            document.getElementById('miniPlayIcon').className = `fas ${icon}`;
+            document.getElementById('fullPlayIcon').className = `fas ${icon}`;
+        }
+
+        function openFullPlayer() {
+            document.getElementById('fullPlayer').classList.add('active');
+        }
+
+        function closeFullPlayer() {
+            document.getElementById('fullPlayer').classList.remove('active');
+        }
+
+        // Time Updates
+        audio.ontimeupdate = () => {
+            if (!audio.duration) return;
+            const percentage = (audio.currentTime / audio.duration) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+
+            document.getElementById('currentTime').innerText = formatTime(audio.currentTime);
+            document.getElementById('totalDuration').innerText = formatTime(audio.duration);
+        };
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function seekAudio(e) {
+            const bar = document.getElementById('progressBar');
+            const clickPosition = e.offsetX / bar.offsetWidth;
+            audio.currentTime = clickPosition * audio.duration;
         }
     </script>
 </body>
