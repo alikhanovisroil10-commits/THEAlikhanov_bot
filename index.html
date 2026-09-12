@@ -23,7 +23,7 @@
             min-height: 100vh;
         }
         .header {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 800;
             background: linear-gradient(45deg, #ff007f, #7928ca);
             -webkit-background-clip: text;
@@ -122,7 +122,7 @@
             align-items: center;
             gap: 10px;
             overflow: hidden;
-            width: 60%;
+            width: 65%;
         }
         .player-info img {
             width: 40px;
@@ -174,47 +174,59 @@
         const audio = document.getElementById('audioPlayer');
         let isPlaying = false;
 
-        async function searchMusic() {
-            const query = document.getElementById('searchInput').value;
+        function searchMusic() {
+            const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
 
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '<p style="text-align: center; color: #888;">Qidirilmoqda...</p>';
 
-            const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&limit=15`;
+            // Eski script'ni o'chirish
+            const oldScript = document.getElementById('jsonp_script');
+            if (oldScript) oldScript.remove();
 
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
+            // JSONP orqali cheklovlarsiz API chaqirish
+            const script = document.createElement('script');
+            script.id = 'jsonp_script';
+            script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&limit=20&callback=handleResults`;
+            document.body.appendChild(script);
+        }
 
-                resultsDiv.innerHTML = '';
+        // Qidiruv natijalari kelganda ishlovchi funksiya
+        function handleResults(data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
 
-                if (data.results.length === 0) {
-                    resultsDiv.innerHTML = '<p style="text-align: center; color: #888;">Musiqa topilmadi.</p>';
-                    return;
-                }
-
-                data.results.forEach(track => {
-                    const card = document.createElement('div');
-                    card.className = 'track-card';
-                    
-                    const cover = track.artworkUrl100.replace('100x100bb', '300x300bb');
-                    
-                    card.onclick = () => playTrack(track.previewUrl, track.trackName, track.artistName, cover);
-
-                    card.innerHTML = `
-                        <img src="${cover}" alt="cover">
-                        <div class="track-info">
-                            <div class="track-title">${track.trackName}</div>
-                            <div class="track-artist">${track.artistName}</div>
-                        </div>
-                    `;
-                    resultsDiv.appendChild(card);
-                });
-
-            } catch (error) {
-                resultsDiv.innerHTML = '<p style="text-align: center; color: #ff4d4d;">Xatolik yuz berdi!</p>';
+            if (!data.results || data.results.length === 0) {
+                resultsDiv.innerHTML = '<p style="text-align: center; color: #888;">Musiqa topilmadi.</p>';
+                return;
             }
+
+            data.results.forEach(track => {
+                if (!track.previewUrl) return; // Audio havolasi yo'q bo'lsa o'tkazib yuborish
+
+                const card = document.createElement('div');
+                card.className = 'track-card';
+                
+                const cover = track.artworkUrl100 ? track.artworkUrl100.replace('100x100bb', '300x300bb') : '';
+                
+                // Qo'shiq ma'lumotlarini xavfsiz shaklda uzatish
+                card.onclick = () => playTrack(
+                    track.previewUrl, 
+                    track.trackName.replace(/'/g, "\\'"), 
+                    track.artistName.replace(/'/g, "\\'"), 
+                    cover
+                );
+
+                card.innerHTML = `
+                    <img src="${cover}" alt="cover">
+                    <div class="track-info">
+                        <div class="track-title">${track.trackName}</div>
+                        <div class="track-artist">${track.artistName}</div>
+                    </div>
+                `;
+                resultsDiv.appendChild(card);
+            });
         }
 
         function playTrack(audioUrl, title, artist, cover) {
