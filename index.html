@@ -3,163 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KRADZIU Player</title>
+    <title>MY MUSIC PLAYER</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        body {
-            background: #0d0a1a;
-            color: #fff;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .header {
-            font-size: 24px;
-            font-weight: 800;
-            background: linear-gradient(45deg, #ff007f, #7928ca);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .search-box {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            padding: 4px 12px;
-            margin-bottom: 20px;
-        }
-        .search-box input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #fff;
-            padding: 10px;
-            font-size: 15px;
-        }
-        .search-box button {
-            background: transparent;
-            border: none;
-            color: #ff007f;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 0 8px;
-        }
-        .results-container {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 90px;
-        }
-        .track-card {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .track-card:active {
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(0.98);
-        }
-        .track-card img {
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
-            object-fit: cover;
-            margin-right: 12px;
-        }
-        .track-info {
-            flex-grow: 1;
-            overflow: hidden;
-        }
-        .track-title {
-            font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .track-artist {
-            font-size: 12px;
-            color: #aaa;
-            margin-top: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .player-bar {
-            position: fixed;
-            bottom: 15px;
-            width: calc(100% - 30px);
-            max-width: 400px;
-            background: rgba(20, 15, 38, 0.95);
-            border: 1px solid rgba(255, 0, 127, 0.3);
-            border-radius: 18px;
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
-        }
-        .player-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            overflow: hidden;
-            width: 70%;
-        }
-        .player-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 6px;
-        }
-        .play-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #ff007f, #7928ca);
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: #121212; color: #fff; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .header { font-size: 24px; font-weight: bold; color: #1db954; margin-bottom: 20px; text-transform: uppercase; }
+        .search-box { width: 100%; max-width: 400px; display: flex; background: #282828; border-radius: 20px; padding: 5px 15px; margin-bottom: 20px; }
+        .search-box input { width: 100%; background: transparent; border: none; outline: none; color: #fff; padding: 10px; font-size: 16px; }
+        .search-box button { background: transparent; border: none; color: #1db954; font-size: 18px; cursor: pointer; }
+        .results-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 100px; }
+        .track-card { display: flex; align-items: center; background: #181818; border-radius: 10px; padding: 10px; cursor: pointer; }
+        .track-card:hover { background: #282828; }
+        .track-card img { width: 50px; height: 50px; border-radius: 6px; margin-right: 12px; object-fit: cover; }
+        .track-info { flex-grow: 1; overflow: hidden; }
+        .track-title { font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-artist { font-size: 13px; color: #b3b3b3; margin-top: 3px; }
+        .player-bar { position: fixed; bottom: 10px; width: calc(100% - 20px); max-width: 400px; background: #282828; border-radius: 15px; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .player-info { display: flex; align-items: center; gap: 10px; width: 70%; overflow: hidden; }
+        .player-info img { width: 45px; height: 45px; border-radius: 6px; }
+        .play-btn { width: 45px; height: 45px; border-radius: 50%; background: #1db954; border: none; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-    <div class="header">KRADZIU MUSIC</div>
+    <!-- Nomini shu yerdan o'zgartirishingiz mumkin -->
+    <div class="header" id="appTitle">MUSIC PLAYER</div>
 
     <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Qo'shiq yoki xonanda nomi..." onkeypress="if(event.key === 'Enter') startSearch()">
-        <button onclick="startSearch()"><i class="fas fa-search"></i></button>
+        <input type="text" id="searchInput" placeholder="Qo'shiq yoki ijrochi nomi..." onkeypress="if(event.key==='Enter') searchMusic()">
+        <button onclick="searchMusic()"><i class="fas fa-search"></i></button>
     </div>
 
     <div class="results-container" id="results">
-        <p style="text-align: center; color: #888; font-size: 14px; margin-top: 20px;">Qidiruvga musiqa nomini kiriting...</p>
+        <p style="text-align: center; color: #b3b3b3;">Qidiruvga biron bir nom yozing...</p>
     </div>
 
     <div class="player-bar" id="playerBar" style="display: none;">
@@ -179,78 +57,59 @@
         const audio = document.getElementById('audioPlayer');
         let isPlaying = false;
 
-        function startSearch() {
+        async function searchMusic() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
 
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '<p style="text-align: center; color: #888;">Qidirilmoqda...</p>';
+            resultsDiv.innerHTML = '<p style="text-align: center; color: #b3b3b3;">Qidirilmoqda...</p>';
 
-            // Eski script bo'lsa o'chiramiz
-            const oldScript = document.getElementById('api_script');
-            if (oldScript) oldScript.remove();
+            // Muammolarsiz va bepul ochiq Jamendo API
+            const url = `https://api.jamendo.com/v3.0/tracks/?client_id=c8b6b230&format=json&limit=20&namesearch=${encodeURIComponent(query)}&include=musicinfo`;
 
-            // Timeout orqali agar server javob bermasa xabar berish
-            const searchTimeout = setTimeout(() => {
-                if(resultsDiv.innerHTML.includes('Qidirilmoqda...')) {
-                    resultsDiv.innerHTML = '<p style="text-align: center; color: #ff4d4d;">Tarmoqda xatolik bo\'ldi, qayta urinib ko\'ring.</p>';
-                }
-            }, 8000);
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
 
-            // iTunes JSONP API orqali qidiruv
-            window.handleMusicResults = function(data) {
-                clearTimeout(searchTimeout);
                 resultsDiv.innerHTML = '';
 
                 if (!data.results || data.results.length === 0) {
-                    resultsDiv.innerHTML = '<p style="text-align: center; color: #888;">Hech narsa topilmadi.</p>';
+                    resultsDiv.innerHTML = '<p style="text-align: center; color: #b3b3b3;">Musiqa topilmadi.</p>';
                     return;
                 }
 
                 data.results.forEach(track => {
-                    if (!track.previewUrl) return;
-
                     const card = document.createElement('div');
                     card.className = 'track-card';
-                    
-                    const cover = track.artworkUrl100 ? track.artworkUrl100.replace('100x100bb', '300x300bb') : '';
-                    
-                    card.onclick = () => playTrack(track.previewUrl, track.trackName, track.artistName, cover);
+                    const cover = track.album_image || track.image || 'https://via.placeholder.com/150';
+
+                    card.onclick = () => playTrack(track.audio, track.name, track.artist_name, cover);
 
                     card.innerHTML = `
                         <img src="${cover}" alt="cover">
                         <div class="track-info">
-                            <div class="track-title">${escapeHtml(track.trackName)}</div>
-                            <div class="track-artist">${escapeHtml(track.artistName)}</div>
+                            <div class="track-title">${track.name}</div>
+                            <div class="track-artist">${track.artist_name}</div>
                         </div>
                     `;
                     resultsDiv.appendChild(card);
                 });
-            };
 
-            const script = document.createElement('script');
-            script.id = 'api_script';
-            script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=25&callback=handleMusicResults`;
-            script.onerror = () => {
-                clearTimeout(searchTimeout);
-                resultsDiv.innerHTML = '<p style="text-align: center; color: #ff4d4d;">Qidiruv serveriga ulanishda xatolik.</p>';
-            };
-            document.body.appendChild(script);
+            } catch (error) {
+                resultsDiv.innerHTML = '<p style="text-align: center; color: #ff5555;">Server bilan ulanishda xatolik bo\'ldi.</p>';
+            }
         }
 
         function playTrack(audioUrl, title, artist, cover) {
             audio.src = audioUrl;
-            audio.play().then(() => {
-                isPlaying = true;
-                document.getElementById('playIcon').className = 'fas fa-pause';
-            }).catch(e => {
-                console.log("Play error", e);
-            });
+            audio.play();
+            isPlaying = true;
 
             document.getElementById('currentTitle').innerText = title;
             document.getElementById('currentArtist').innerText = artist;
             document.getElementById('currentCover').src = cover;
             document.getElementById('playerBar').style.display = 'flex';
+            document.getElementById('playIcon').className = 'fas fa-pause';
         }
 
         function togglePlay() {
@@ -263,10 +122,6 @@
                 playIcon.className = 'fas fa-pause';
             }
             isPlaying = !isPlaying;
-        }
-
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     </script>
 </body>
